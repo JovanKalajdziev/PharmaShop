@@ -20,7 +20,6 @@ def register(request):
     context = {'form': form}
     return render(request, 'register.html', context)
 
-@login_required
 def index(request):
     products = Product.objects.all()
     context = {'products': products}
@@ -40,13 +39,11 @@ def cart_view(request):
 
     return render(request, 'cart.html', context)
 
-@login_required
 def product_details(request, slug):
     product = get_object_or_404(Product, slug=slug)
     context = {'product': product}
     return render(request, 'product.html', context)
 
-@login_required
 def products_by_category(request, slug):
     category = Category.objects.get(slug=slug)
     products = Product.objects.filter(category=category)
