@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Category, Product
+from .models import Category, Product, Cart, ProductCart, Order, ProductOrder, CustomUser
+
+
+class ProductCartInline(admin.TabularInline):
+    model = ProductCart
+    extra = 0
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -24,5 +29,14 @@ class ProductAdmin(admin.ModelAdmin):
         return request.user.is_superuser
 
 
+class CartAdmin(admin.ModelAdmin):
+    inlines = [ProductCartInline]
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
+admin.site.register(Cart, CartAdmin)
+admin.site.register(ProductCart)
+admin.site.register(Order)
+admin.site.register(ProductOrder)
+admin.site.register(CustomUser)

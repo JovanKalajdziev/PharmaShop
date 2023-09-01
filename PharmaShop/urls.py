@@ -13,6 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.views.generic import RedirectView
+
 from app import views
 from django.contrib import admin
 from django.urls import path
@@ -21,6 +23,7 @@ from django.conf.urls.static import static
 from PharmaShop import settings
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='index/')),
     path("admin/", admin.site.urls),
     path("login/", LoginView.as_view(template_name='login.html'), name="login"),
     path("logout/", LogoutView.as_view(template_name='logout.html'), name="logout"),
@@ -33,6 +36,6 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path("success/", views.success, name="success"),
     path("orders/", views.orders, name="orders"),
-    path("add_to_cart/<str:slug>", views.add_to_cart, name="add_to_cart"),
+    path("add_to_cart/<str:slug>-<str:page>", views.add_to_cart, name="add_to_cart"),
     path("remove_from_cart/<str:slug>", views.remove_from_cart, name="remove_from_cart")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

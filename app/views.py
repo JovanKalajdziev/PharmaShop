@@ -20,7 +20,7 @@ def register(request):
     context = {'form': form}
     return render(request, 'register.html', context)
 
-
+@login_required
 def index(request):
     products = Product.objects.all()
     context = {'products': products}
@@ -30,22 +30,23 @@ def index(request):
 @login_required
 def cart_view(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_items = cart.productcart_set.all()  # Get the products in the cart
-
+    cart_items = ProductCart.objects.filter(cart=cart)  # Get the products in the cart
+    total = sum([item.product.price * item.quantity for item in cart_items])
     context = {
         'cart': cart,
         'cart_items': cart_items,
+        'total': total
     }
 
     return render(request, 'cart.html', context)
 
-
+@login_required
 def product_details(request, slug):
     product = get_object_or_404(Product, slug=slug)
     context = {'product': product}
     return render(request, 'product.html', context)
 
-
+@login_required
 def products_by_category(request, slug):
     category = Category.objects.get(slug=slug)
     products = Product.objects.filter(category=category)
@@ -62,14 +63,19 @@ def checkout(request):
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
-            cart = Cart.objects.filter(active=True, user=request.user).first()
-            cart.active = False
-            cart.save()
-            order = Order(cart=cart, full_name=request.POST.get('full_name'), address=request.POST.get('address'),
-                          delivery_status='new')
+            print('valid')
+            cart = Cart.objects.filter(user=request.user).first()
+            products_in_cart = ProductCart.objects.filter(cart=cart)
+            order = Order(user=request.user)
             order.save()
             print(order)
-            return redirect('/orders')
+            for product in products_in_cart:
+                product_order = ProductOrder(product=product.product, order=order, quantity=product.quantity)
+                product_order.save()
+                product.delete()
+            return redirect('/success')
+        else:
+            redirect('/checkout')
     else:
         form = CheckoutForm()
 
@@ -78,13 +84,13 @@ def checkout(request):
     }
     return render(request, 'checkout.html', context)
 
-
+@login_required
 def success(request):
     return render(request, 'success.html')
 
 
 @login_required
-def add_to_cart(request, slug):
+def add_to_cart(request, slug, page):
     product = Product.objects.get(slug=slug)
     cart, created = Cart.objects.get_or_create(user=request.user)
     product_cart, created = ProductCart.objects.get_or_create(product=product, cart=cart)
@@ -93,7 +99,12 @@ def add_to_cart(request, slug):
         product_cart.quantity = 1
     product_cart.save()
 
-    return redirect('/')
+    if page == 'product':
+        return redirect(f'/product/{slug}')
+    elif page != 'index':
+        return redirect(f'/category/{page}')
+
+    return redirect(page)
 
 
 @login_required
@@ -106,7 +117,7 @@ def remove_from_cart(request, slug):
     if product_in_cart is not None:
         product_in_cart.delete()
 
-    return redirect('/')
+    return redirect('cart')
 
 
 @login_required
