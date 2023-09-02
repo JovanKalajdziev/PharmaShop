@@ -11,16 +11,17 @@
 <body>
 {% include 'navbar.html' %}
 <div class="container mt-3">
-    {% if orders|length == 0 %}
+    {% if length == 0 %}
         <h2 class="mb-5">No orders yet</h2>
     {% else %}
     <div class="container">
     <h2 class="mb-5">Your order history</h2>
         <div class="row mb-2">
-            {% for order in orders %}
+            {% for order, total_amount in orders%}
                 <div class="col-md-3">
-                    <div class="card border border-secondary">
+                    <div class="card border border-secondary bg-light">
                         <p class="card-text"><strong>Order date: {{ order.created_at }}</strong></p>
+                        <p class="card-text"><strong>Total amount {{ total_amount }}$.</strong></p>
                         <p class="card-text"><strong>Status: PENDING.</strong></p>
                     </div>
                 </div>

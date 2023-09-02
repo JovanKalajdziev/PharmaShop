@@ -21,7 +21,7 @@
         <div class="card mb-1">
             <div class="card-header">
                 <p class="card-text" style="display: inline"><strong>Total amount: {{ total }}$</strong></p>
-                <a type="button" class="btn btn-primary" href="{% url 'checkout' %}">Checkout</a></div>
+                <a type="button" class="btn btn-primary" href="{% url 'checkout' total=total %}">Checkout</a></div>
             </div>
             <ul class="list-group list-group-flush">
                 {% for product in cart_items %}

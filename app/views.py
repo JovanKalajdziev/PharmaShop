@@ -56,7 +56,7 @@ def products_by_category(request, slug):
 
 
 @login_required
-def checkout(request):
+def checkout(request, total):
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
@@ -77,7 +77,8 @@ def checkout(request):
         form = CheckoutForm()
 
     context = {
-        'form': form
+        'form': form,
+        'total': total
     }
     return render(request, 'checkout.html', context)
 
@@ -125,5 +126,10 @@ def profile(request):
 
 @login_required
 def orders(request):
-    context = {'orders': Order.objects.filter(user=request.user)}
+    user_orders = Order.objects.filter(user=request.user)
+    total_amounts = []
+    for order in user_orders:
+        products = ProductOrder.objects.filter(order=order)
+        total_amounts.append(sum([product.product.price * product.quantity for product in products]))
+    context = {'orders': zip(user_orders, total_amounts), 'length': len(total_amounts)}
     return render(request, 'orders.html', context)

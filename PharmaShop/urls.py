@@ -29,7 +29,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(template_name='logout.html'), name="logout"),
     path("index/", views.index, name="index"),
     path("category/<str:slug>", views.products_by_category, name="products_by_category"),
-    path("checkout/", views.checkout, name="checkout"),
+    path("checkout/<str:total>", views.checkout, name="checkout"),
     path("profile/", views.profile, name="profile"),
     path("product/<str:slug>", views.product_details, name="product"),
     path("cart/", views.cart_view, name="cart"),

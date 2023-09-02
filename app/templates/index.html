@@ -21,8 +21,8 @@
                         <img src="{{ product.image.url }}" width="200" height="250" class="card-img-top" alt="{{ product.name }}">
                         <br>
                         <p class="card-text"><strong>Price: {{ product.price }}$</strong></p>
-                        <a type="button" href="{% url 'product' slug=product.slug %}" class="btn btn-info mb-1 text-white text-decoration-none">Details</a></button>
-                        <a type="button" href="{% url 'add_to_cart' slug=product.slug page='index' %}" class="btn btn-primary text-white text-decoration-none">Add to cart</a></button>
+                        <a type="button" href="{% url 'product' slug=product.slug %}" class="btn btn-info mb-1 text-white text-decoration-none">Details</a>
+                        <a type="button" href="{% url 'add_to_cart' slug=product.slug page='index' %}" class="btn btn-primary text-white text-decoration-none">Add to cart</a>
                     </div>
                 </div>
                 {% if forloop.counter|divisibleby:4 and not forloop.last %}
